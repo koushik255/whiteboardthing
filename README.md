@@ -2,6 +2,9 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+uses html2canvas to take the screenshots
+
+
 First, run the development server:
 
 ```bash
