@@ -1,0 +1,15 @@
+so basically a quizlet clone but with like locally saveable pngs and also like you just import the folder and the front has like a 1 and the back has like a 2 for th enaming scehem
+
+what would that look like
+make a program that lets you create cards, can use HTMl2canvsa to save them
+then its going to need to take files as input and return them in a quizlet manner
+
+
+option1: i could create basically samething i have right now but to write text on the screen,
+then i would already have html2canvas and i can just create another page that takes the input of all the photos
+1- write text onto the screen
+2-create another page that allows you to input your files / figure out how to just import files from user and show it on the page
+3- going to need a system to link the photos together so basically im thinking naming scheme like if (filename1=filename2) ... but like it would be  "hello1" "hello2" and i could just
+make it check all the letters except the lastone and since they would be the same word i could just use len 
+4-id probably have to have like 2 states, a front state and a back state and then in the program those would just activly changed every time you go to the next set of cards
+5-

@@ -7,9 +7,10 @@ export default function Home() {
   let backgroundcolor = "border border-gray-300";
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [strokeColor, setStrokeColor] = useState("#000000"); // Add state for stroke color
   const historyRef = useRef([])
+  const [text,SetText] = useState("")
   //ref to gold the history of the canvas strokes to undo
-
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -20,18 +21,16 @@ export default function Home() {
     canvas.height = window.innerHeight * 0.94;
 
     // set drawing style
-    context.strokeStyle = "black";
+    context.strokeStyle = strokeColor;
     context.lineWidth = 2;
     context.lineCap = "round";
     backgroundcolor = "border border-gray-300";
 
-   
-   
     historyRef.current.push(
       context.getImageData(0,0,canvas.width,canvas.height)
     );
 
-  }, []);
+  }, [strokeColor]); // Add strokeColor as dependency
 
   // function to clear the canvas
   const resetCanvas = () => {
@@ -40,40 +39,16 @@ export default function Home() {
     context.clearRect(0, 0, canvas.width, canvas.height);
   };
 
-  const colorYellow = () => {
-    const canvas = canvasRef.current;
-    //every time ref.current is used it allows us to acually manipulate the DOM element /
-    //it retrieves the dom elemenet from th ref
-    const context = canvas.getContext("2d");
-    context.strokeStyle = "yellow";
-  };
-
-
-  const backToBlack= () => {
-    const canvas = canvasRef.current;
-    const context = canvas.getContext("2d");
-    context.strokeStyle = "black";
-
-  }
-
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.ctrlKey && (e.key === "x" || e.key === "X")) {
-        colorYellow();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, []);
 
   
+  const handleColorChange = (e) => {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    const newColor = e.target.value;
+    setStrokeColor(newColor);
+    context.strokeStyle = newColor;
+  };
 
-  // handle Undo (cntrl z ) problem = no fucking clue how to set
-  // last stroke to a variable then to delete that specfici
-  //stroke of the screen
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.ctrlKey && (e.key === "z" || e.key === "Z")) {
@@ -99,6 +74,30 @@ export default function Home() {
     context.moveTo(x, y);
     setIsDrawing(true);
   };
+
+
+
+  function drawText() {
+    const canvas = canvasRef.current;
+    const context = canvas.getContext("2d");
+    context.font = "48px serif";
+    context.fillStyle = strokeColor; // Use the current color
+    const x = canvas.width/2
+    const y = canvas.height/2
+
+    context.fillText(text, x-230, y-230);
+    context.beginPath();
+    context.moveTo(x, 0);
+    context.stroke();
+
+    
+    historyRef.current.push(
+      context.getImageData(0,0,canvas.width,canvas.height)
+    )
+    
+  }
+  
+  
 
   const draw = (e) => {
     if (!isDrawing) return;
@@ -156,21 +155,47 @@ export default function Home() {
   }
 
 
+  //things to add, i can make the whiteboard the whole page
+  // i can make it so that the color changer is a html color thing 
+  // 
+
+
 
 
   return (
     <div className="flex min-h-screen flex-col items-center p-4">
       <h1 className="text-2xl font-bold mb-4">Whiteboard</h1>
-      <button className="px-3 py-3" onClick= {colorYellow}> 
-        Yellow 
-      </button>
-
-      <button className="px-3 py-3 text-xl" onClick = {backToBlack}> 
-        Normal
-      </button>
+      <div className="flex items-center gap-4 mb-4">
+        <label htmlFor="color-picker" className="text-lg">Stroke Color:</label>
+        <input
+          type="color"
+          id="color-picker"
+          value={strokeColor}
+          onChange={handleColorChange}
+          className="w-12 h-12 rounded cursor-pointer"
+        />
+      </div>
       <button className="px-3 py-3 bg-blue-500 text-white rounded" onClick={takeScreenshot}>
         Screenshot
       </button>
+      <button className="px-3 py-3 bg-blue-500 text-white rounded" onClick={resetCanvas}>
+        Clear
+      </button>
+
+      <button className="px-3 py-3 bg-blue-500 text-white rounded" onClick={drawText}>
+        Draw text
+      </button>
+
+      <h1> Ctrl + Z for undo!</h1>
+
+      <input
+       type="text" 
+       value = {text}
+       onChange={e => SetText(e.target.value)}
+       placeholder = " write your thing here"
+      />
+
+
 
       <canvas
         ref={canvasRef}
